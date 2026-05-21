@@ -28,7 +28,7 @@ public class DBConnection {
     private static final String jdbcURL = protocol + vendorName + ipAddress;
     
     // Driver and Connection Interface Reference
-    private static final String MYSQLJDBCDriver = "com.mysql.jdbc.Driver";
+    private static final String MYSQLJDBCDriver = "com.mysql.cj.jdbc.Driver";
     private static Connection conn = null;
     
     // Username and Password
