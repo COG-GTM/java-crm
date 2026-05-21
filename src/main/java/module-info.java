@@ -3,6 +3,7 @@ module javacrm {
     requires javafx.fxml;
     requires java.sql;
     requires java.logging;
+    requires mysql.connector.j;
 
     opens javacrm to javafx.fxml;
     opens Controller to javafx.fxml;
