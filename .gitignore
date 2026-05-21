@@ -1,0 +1,23 @@
+# Maven
+target/
+*.class
+
+# IDE
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+nbproject/
+build/
+dist/
+out/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+errorlog.txt
+userlog.txt

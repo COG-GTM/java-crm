@@ -5,14 +5,28 @@ This Java application serves as a customer relationship management (CRM) system.
 
 This application was developed to fulfill the requirements for an Advanced Java Concepts academic project at WGU. It demonstrates database and file server application development skills. The application incorporates lambda expressions; advanced exception control mechanisms to improve user experience and application stability; localization and date/time APIs to support end-users in various geographical regions; and streams and filters to manipulate data more efficiently.
 
-## Installation
-Prerequisites:
-* Download and install [Java Runtime Environment (JRE) 8](https://www.oracle.com/java/technologies/javase-jre8-downloads.html) or higher
+## Requirements
 
-Steps:
-1.	Install the prerequisite applications
-2.	Download [dist.zip file](dist.zip)
-3.	Extract files and run java-crm.jar
+* **JDK 11** or higher (e.g. [Eclipse Temurin 11](https://adoptium.net/temurin/releases/?version=11))
+* **Apache Maven 3.6+**
+
+## Building & Running
+
+```bash
+# Compile
+mvn clean compile
+
+# Run the application
+mvn javafx:run
+
+# Package as JAR
+mvn clean package
+```
+
+### Legacy Installation (pre-built JAR)
+
+1. Download [dist.zip file](dist.zip)
+2. Extract files and run `java-crm.jar` (requires JDK 11+)
 
 ## Using the Application
 The login screen will appear upon starting the application.
