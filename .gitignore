@@ -1,0 +1,21 @@
+# Maven build output
+target/
+
+# IDE files
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+nbproject/
+*.nbattrs
+nb-configuration.xml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+errorlog.txt
+userlog.txt
