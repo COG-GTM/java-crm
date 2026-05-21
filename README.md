@@ -5,21 +5,34 @@ This Java application serves as a customer relationship management (CRM) system.
 
 This application was developed to fulfill the requirements for an Advanced Java Concepts academic project at WGU. It demonstrates database and file server application development skills. The application incorporates lambda expressions; advanced exception control mechanisms to improve user experience and application stability; localization and date/time APIs to support end-users in various geographical regions; and streams and filters to manipulate data more efficiently.
 
-## Installation
-Prerequisites:
-* Download and install [Java Runtime Environment (JRE) 8](https://www.oracle.com/java/technologies/javase-jre8-downloads.html) or higher
+## Requirements
+* **JDK 11** or higher ([Eclipse Temurin](https://adoptium.net/) recommended)
+* **Apache Maven 3.6+**
 
-Steps:
-1.	Install the prerequisite applications
-2.	Download [dist.zip file](dist.zip)
-3.	Extract files and run java-crm.jar
+## Building
+
+```bash
+mvn clean compile
+```
+
+## Running
+
+```bash
+mvn javafx:run
+```
+
+> **Note:** The application requires a MySQL database connection. See the database configuration in `src/main/java/DAO/DBConnection.java`.
+
+## Installation (Pre-built JAR)
+1. Download [dist.zip file](dist.zip)
+2. Extract files and run java-crm.jar (requires JDK 11+)
 
 ## Using the Application
 The login screen will appear upon starting the application.
 
 ![Login Screen](img/login-screenshot.png)
 
-Enter your credentials and click the “Login” button. Once logged in, the menu will appear.
+Enter your credentials and click the "Login" button. Once logged in, the menu will appear.
 
 ![Menu Screen](img/menu-screen.png)
 
@@ -47,3 +60,6 @@ Use the buttons to navigate to other screens where you can view/manage customers
 
 ## Project Status
 This project was created for an academic course. Development will be discontinued for the foreseeable future.
+
+## Migration Notes
+This project was migrated from Java 8 to Java 11. See [MIGRATION_NOTES.md](MIGRATION_NOTES.md) for details.
