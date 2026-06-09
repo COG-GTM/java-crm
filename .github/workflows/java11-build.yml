@@ -19,8 +19,5 @@ jobs:
           java-version: '11'
           cache: maven
 
-      - name: Compile
-        run: mvn -B -e compile
-
-      - name: Verify (skip tests — no test suite yet)
-        run: mvn -B -e -DskipTests verify
+      - name: Build and verify (compile, enforcer, package)
+        run: mvn -B -e clean verify

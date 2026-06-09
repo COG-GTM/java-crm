@@ -10,6 +10,9 @@ This application was developed to fulfill the requirements for an Advanced Java 
 * [JDK 11](https://adoptium.net/temurin/releases/?version=11) or higher (Temurin/Adoptium recommended)
 * [Apache Maven](https://maven.apache.org/download.cgi) 3.6+
 
+> JavaFX is no longer bundled with the JDK as of Java 11; it is pulled in as
+> OpenJFX dependencies by Maven, so a plain JDK 11 (no bundled JavaFX) is fine.
+
 ## Building
 
 ```bash
@@ -22,13 +25,21 @@ mvn clean compile
 mvn javafx:run
 ```
 
+This is the recommended way to run the app: the `javafx-maven-plugin` configures
+the OpenJFX runtime automatically.
+
 ## Packaging
 
 ```bash
 mvn -DskipTests package
 ```
 
-The packaged JAR will be in `target/java-crm-1.0-SNAPSHOT.jar`.
+This produces `target/java-crm-1.0-SNAPSHOT.jar` (with `Main-Class: javacrm.Launcher`).
+Note that this jar is **not** self-contained — the OpenJFX libraries are not
+bundled into it. Prefer `mvn javafx:run`; to run the jar directly you must place
+the OpenJFX modules on the module/class path yourself.
+
+See [MIGRATION_NOTES.md](MIGRATION_NOTES.md) for details of the Java 8 → 11 migration.
 
 ## Using the Application
 The login screen will appear upon starting the application.
