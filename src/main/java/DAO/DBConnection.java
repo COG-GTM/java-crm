@@ -23,9 +23,14 @@ public class DBConnection {
     private static final String protocol = "jdbc";
     private static final String vendorName = ":mysql:";
     private static final String ipAddress = "//3.227.166.251/U07k1T";
-    
+
+    // Connection parameters that preserve MySQL Connector/J 5.x defaults under
+    // Connector/J 8.x (8.x flips useSSL to true and requires a known timezone).
+    // This keeps connectivity behavior at parity with the Java 8 baseline.
+    private static final String params = "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+
     // JDBC URL
-    private static final String jdbcURL = protocol + vendorName + ipAddress;
+    private static final String jdbcURL = protocol + vendorName + ipAddress + params;
     
     // Driver and Connection Interface Reference
     private static final String MYSQLJDBCDriver = "com.mysql.cj.jdbc.Driver";

@@ -94,8 +94,15 @@ No `--add-opens` flags are required.
 - **Before**: `com.mysql.jdbc.Driver` (removed in Connector/J 8)
 - **After**: `com.mysql.cj.jdbc.Driver` (MySQL Connector/J 8.0.33, managed by Maven)
 
-The driver class name is the only DB-related code change; the JDBC URL,
-credentials handling, and SQL are unchanged.
+The SQL and credentials handling are unchanged. The JDBC URL gains
+`?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC` to preserve the
+Connector/J 5.x defaults under 8.x (8.x defaults `useSSL=true` and requires a
+known server timezone), keeping connection behavior at parity with the Java 8
+baseline.
+
+> Note: the DB username/password are hardcoded in `DBConnection.java`. This is
+> pre-existing and intentionally left unchanged to keep the migration minimal;
+> externalizing credentials is tracked as a follow-up.
 
 ## Resource Loading
 
