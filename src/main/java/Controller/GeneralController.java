@@ -55,7 +55,7 @@ public class GeneralController {
         try{
             root = FXMLLoader.load(getClass().getResource(resourcePath), RBMain.getRb());
             scene = new Scene(root, WindowSizing.getWidth(stage), WindowSizing.getHeight(stage));
-            scene.getStylesheets().add("Resources/generalStylesheet.css");
+            scene.getStylesheets().add(getClass().getResource("/Resources/generalStylesheet.css").toExternalForm());
             root.requestFocus();
             stage.setScene(scene);
             stage.show();

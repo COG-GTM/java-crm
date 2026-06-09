@@ -5,21 +5,48 @@ This Java application serves as a customer relationship management (CRM) system.
 
 This application was developed to fulfill the requirements for an Advanced Java Concepts academic project at WGU. It demonstrates database and file server application development skills. The application incorporates lambda expressions; advanced exception control mechanisms to improve user experience and application stability; localization and date/time APIs to support end-users in various geographical regions; and streams and filters to manipulate data more efficiently.
 
-## Installation
-Prerequisites:
-* Download and install [Java Runtime Environment (JRE) 8](https://www.oracle.com/java/technologies/javase-jre8-downloads.html) or higher
+## Prerequisites
 
-Steps:
-1.	Install the prerequisite applications
-2.	Download [dist.zip file](dist.zip)
-3.	Extract files and run java-crm.jar
+* [JDK 11](https://adoptium.net/temurin/releases/?version=11) or higher (Temurin/Adoptium recommended)
+* [Apache Maven](https://maven.apache.org/download.cgi) 3.6+
+
+> JavaFX is no longer bundled with the JDK as of Java 11; it is pulled in as
+> OpenJFX dependencies by Maven, so a plain JDK 11 (no bundled JavaFX) is fine.
+
+## Building
+
+```bash
+mvn clean compile
+```
+
+## Running
+
+```bash
+mvn javafx:run
+```
+
+This is the recommended way to run the app: the `javafx-maven-plugin` configures
+the OpenJFX runtime automatically.
+
+## Packaging
+
+```bash
+mvn -DskipTests package
+```
+
+This produces `target/java-crm-1.0-SNAPSHOT.jar` (with `Main-Class: javacrm.Launcher`).
+Note that this jar is **not** self-contained — the OpenJFX libraries are not
+bundled into it. Prefer `mvn javafx:run`; to run the jar directly you must place
+the OpenJFX modules on the module/class path yourself.
+
+See [MIGRATION_NOTES.md](MIGRATION_NOTES.md) for details of the Java 8 → 11 migration.
 
 ## Using the Application
 The login screen will appear upon starting the application.
 
 ![Login Screen](img/login-screenshot.png)
 
-Enter your credentials and click the “Login” button. Once logged in, the menu will appear.
+Enter your credentials and click the "Login" button. Once logged in, the menu will appear.
 
 ![Menu Screen](img/menu-screen.png)
 
@@ -44,6 +71,10 @@ Use the buttons to navigate to other screens where you can view/manage customers
 * Add more detail to README under "Using the Application" section:
   * Explain screenshots
   * Explain required fields and input validation
+
+## Migration Notes
+
+This project was migrated from Java 8 to Java 11. See [MIGRATION_NOTES.md](MIGRATION_NOTES.md) for details on what changed.
 
 ## Project Status
 This project was created for an academic course. Development will be discontinued for the foreseeable future.
