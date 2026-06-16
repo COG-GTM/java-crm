@@ -7,12 +7,17 @@ This application was developed to fulfill the requirements for an Advanced Java 
 
 ## Installation
 Prerequisites:
-* Download and install [Java Runtime Environment (JRE) 8](https://www.oracle.com/java/technologies/javase-jre8-downloads.html) or higher
+* Download and install [Java Development Kit (JDK) 11](https://adoptium.net/temurin/releases/?version=11) (Temurin/Adoptium or equivalent)
+* [Apache Maven](https://maven.apache.org/) 3.6+
 
 Steps:
 1.	Install the prerequisite applications
-2.	Download [dist.zip file](dist.zip)
-3.	Extract files and run java-crm.jar
+2.	Build the application: `mvn clean package`
+3.	Run the application: `mvn javafx:run`
+
+> Note: As of the Java 11 migration this project builds with Maven and pulls JavaFX
+> in as the OpenJFX dependency (JavaFX is no longer bundled with the JDK). See
+> [MIGRATION_NOTES.md](MIGRATION_NOTES.md) for details.
 
 ## Using the Application
 The login screen will appear upon starting the application.
