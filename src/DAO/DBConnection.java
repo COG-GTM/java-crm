@@ -23,12 +23,13 @@ public class DBConnection {
     private static final String protocol = "jdbc";
     private static final String vendorName = ":mysql:";
     private static final String ipAddress = "//3.227.166.251/U07k1T";
+    // Connection parameters required by MySQL Connector/J 8.x
+    private static final String connectionParams = "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&connectTimeout=5000";
     
     // JDBC URL
-    private static final String jdbcURL = protocol + vendorName + ipAddress;
+    private static final String jdbcURL = protocol + vendorName + ipAddress + connectionParams;
     
-    // Driver and Connection Interface Reference
-    private static final String MYSQLJDBCDriver = "com.mysql.jdbc.Driver";
+    // Connection Interface Reference
     private static Connection conn = null;
     
     // Username and Password
@@ -40,10 +41,11 @@ public class DBConnection {
     public static Connection startConnection(){
         
         try{
-            Class.forName(MYSQLJDBCDriver);
-            conn = (Connection) DriverManager.getConnection(jdbcURL, username, password);
+            // MySQL Connector/J 8.x (com.mysql.cj.jdbc.Driver) auto-registers via the
+            // JDBC 4 ServiceLoader, so an explicit Class.forName(...) call is not needed.
+            conn = DriverManager.getConnection(jdbcURL, username, password);
         }
-        catch(ClassNotFoundException | SQLException e){
+        catch(SQLException e){
             System.out.println(e.getMessage());
             Logger.getLogger("errorlog.txt").log(Level.SEVERE,null,e);
         }

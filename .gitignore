@@ -1,0 +1,15 @@
+# Maven build output
+target/
+
+# NetBeans / IDE
+nbproject/private/
+build/
+.idea/
+*.iml
+
+# Runtime logs
+errorlog.txt
+*.log
+
+# OS
+.DS_Store

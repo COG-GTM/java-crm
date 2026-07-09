@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.javacrm</groupId>
+    <artifactId>java-crm</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>Java CRM</name>
+    <description>JavaFX customer relationship management application, migrated to build and run on Java 9.</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>9</maven.compiler.release>
+        <exec.mainClass>javacrm.JavaCRM</exec.mainClass>
+    </properties>
+
+    <dependencies>
+        <!--
+            MySQL Connector/J. The 8.x driver exposes com.mysql.cj.jdbc.Driver and
+            auto-registers via JDBC 4 ServiceLoader.
+        -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.0.33</version>
+        </dependency>
+
+        <!--
+            JavaFX (javafx.controls, javafx.fxml, ...) is bundled with the JDK 9 that
+            ships JavaFX (e.g. Oracle JDK 9), so no separate JavaFX artifact is declared.
+        -->
+    </dependencies>
+
+    <build>
+        <finalName>java-crm</finalName>
+
+        <!--
+            Sources live directly under src/ rather than the Maven-standard
+            src/main/java, so point sourceDirectory at src.
+        -->
+        <sourceDirectory>src</sourceDirectory>
+
+        <!--
+            Treat src/ as a resources directory as well so .fxml, .css, .png and
+            .properties files are copied to target/classes alongside the compiled
+            classes. Java sources are excluded so they are not duplicated as resources.
+        -->
+        <resources>
+            <resource>
+                <directory>src</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <release>9</release>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>${exec.mainClass}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!--
+                Run the application with `mvn exec:exec`. A fresh JVM is launched so the
+                JDK 9 launcher's special handling of javafx.application.Application
+                subclasses resolves the bundled JavaFX modules automatically. The
+                javafx.* modules are also added explicitly so the app runs regardless of
+                how it is invoked.
+            -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <executable>${java.home}/bin/java</executable>
+                    <arguments>
+                        <argument>--add-modules</argument>
+                        <argument>javafx.controls,javafx.fxml</argument>
+                        <argument>-classpath</argument>
+                        <classpath/>
+                        <argument>${exec.mainClass}</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
