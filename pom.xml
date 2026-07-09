@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.wgu</groupId>
+    <artifactId>java-crm</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>Java CRM</name>
+    <description>JavaFX customer relationship management desktop application (Java 9, classpath build).</description>
+
+    <properties>
+        <!-- Target Java 9 using the simple classpath approach (no module-info.java). -->
+        <maven.compiler.source>9</maven.compiler.source>
+        <maven.compiler.target>9</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- MySQL Connector/J 8.x. Provides the modern com.mysql.cj.jdbc.Driver
+             and runs on Java 9 (Java 8 byte code, loaded from the classpath). -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.30</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>java-crm</finalName>
+        <!-- Non-standard NetBeans layout: sources live directly under src/. -->
+        <sourceDirectory>${project.basedir}/src</sourceDirectory>
+        <resources>
+            <!-- Copy FXML views, CSS, images and i18n bundles onto the classpath,
+                 preserving their package paths (e.g. /View, /Resources, Utilities). -->
+            <resource>
+                <directory>${project.basedir}/src</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>javacrm.JavaCRM</mainClass>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- Copy runtime dependencies next to the jar so `java -jar target/java-crm.jar`
+                 resolves the MySQL driver via the manifest Class-Path (lib/). -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.2</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <includeScope>runtime</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- `mvn exec:java` launches the app from the compiled classpath. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <mainClass>javacrm.JavaCRM</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!--
+            JavaFX is bundled inside Oracle/BellSoft "full" JDK 9 runtimes, so the
+            default build needs NO external JavaFX dependency.
+
+            Some JDK 9 builds (e.g. plain OpenJDK / Azul Zulu) ship WITHOUT JavaFX.
+            On those, activate this profile and point it at a JavaFX 8/9 jar:
+
+                mvn -Plocal-javafx -Djfxrt.jar=/path/to/jfxrt.jar compile
+        -->
+        <profile>
+            <id>local-javafx</id>
+            <activation>
+                <property>
+                    <name>jfxrt.jar</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.oracle.javafx</groupId>
+                    <artifactId>jfxrt</artifactId>
+                    <version>local</version>
+                    <scope>system</scope>
+                    <systemPath>${jfxrt.jar}</systemPath>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+</project>

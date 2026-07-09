@@ -7,12 +7,48 @@ This application was developed to fulfill the requirements for an Advanced Java 
 
 ## Installation
 Prerequisites:
-* Download and install [Java Runtime Environment (JRE) 8](https://www.oracle.com/java/technologies/javase-jre8-downloads.html) or higher
+* Download and install [Java Runtime Environment (JRE) 9](https://www.oracle.com/java/technologies/downloads/#java9) or higher
 
 Steps:
 1.	Install the prerequisite applications
 2.	Download [dist.zip file](dist.zip)
 3.	Extract files and run java-crm.jar
+
+## Building from Source
+The project targets **Java 9** and builds with Maven using the classpath approach
+(no `module-info.java`). JavaFX is used from the classpath rather than the module path
+to avoid reflective-access restrictions on the FXML loader.
+
+Prerequisites:
+* JDK 9
+* Maven 3.6+
+
+Build and package:
+```bash
+mvn clean package
+```
+
+Run:
+```bash
+mvn exec:java
+# or run the packaged jar
+java -jar target/java-crm.jar
+```
+
+### JavaFX note
+JavaFX ships inside Oracle and BellSoft Liberica "full" JDK 9 runtimes, so on those
+JDKs no external JavaFX dependency is required. Some JDK 9 builds (plain OpenJDK,
+Azul Zulu) do **not** bundle JavaFX; on those, supply a JavaFX 8/9 `jfxrt.jar` via the
+`local-javafx` profile:
+```bash
+mvn -Plocal-javafx -Djfxrt.jar=/path/to/jfxrt.jar clean package
+```
+When running on JDK 9, JavaFX/FXML emit "illegal reflective access" warnings — these are
+expected and harmless on Java 9.
+
+### MySQL driver
+Database connectivity uses MySQL Connector/J 8.x (`com.mysql.cj.jdbc.Driver`), pulled in
+automatically by Maven.
 
 ## Using the Application
 The login screen will appear upon starting the application.
