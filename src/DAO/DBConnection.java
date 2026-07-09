@@ -60,6 +60,10 @@ public class DBConnection {
     
     public static void closeConnection(){
         
+        if(conn == null){
+            return;
+        }
+        
         try{
             conn.close();
         }
