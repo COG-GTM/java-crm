@@ -13,6 +13,7 @@ import Model.Address;
 import Model.City;
 import Model.Country;
 import Model.Customer;
+import Model.Role;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
@@ -148,6 +149,12 @@ public class UpdateCustomerScreenController extends GeneralController implements
     }  
     
     private void submit(Event event){
+        
+        // Enforce role-based access before mutating data
+        if(!hasPermission(Role.MANAGE_CUSTOMERS)){
+            displayErrorAlert("You do not have permission to update customers");
+            return;
+        }
         
         if(checkFields(customerNameTxt,addressTxt,postalCodeTxt,cityTxt,countryTxt,phoneTxt)){
             displayMessage(errorLbl,errorStr);

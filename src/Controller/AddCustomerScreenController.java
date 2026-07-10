@@ -13,6 +13,7 @@ import Model.Address;
 import Model.City;
 import Model.Country;
 import Model.Customer;
+import Model.Role;
 import java.sql.SQLException;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -85,6 +86,11 @@ public class AddCustomerScreenController extends GeneralController {
     //</editor-fold>
     
     private void submit(Event event){
+        // Enforce role-based access before mutating data
+        if(!hasPermission(Role.MANAGE_CUSTOMERS)){
+            displayErrorAlert("You do not have permission to add customers");
+            return;
+        }
         // Address2 not required - many people do not have an address that requires filling that line out
         if(checkFields(customerNameTxt,addressTxt,postalCodeTxt,cityTxt,countryTxt,phoneTxt)){
             displayMessage(errorLbl,errorStr);

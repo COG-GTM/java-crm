@@ -34,10 +34,16 @@ public class User {
     private String createdBy;
     private LocalDateTime lastUpdate;
     private String lastUpdateBy;
+    private Role role;
     //</editor-fold>
     
-    // Constructor
+    // Constructor (no role provided - defaults to READ_ONLY, the least-privilege role)
     public User(int userId, String userName, String password, boolean active, LocalDateTime createDate, String createdBy, LocalDateTime lastUpdate, String lastUpdateBy){
+        this(userId, userName, password, active, createDate, createdBy, lastUpdate, lastUpdateBy, Role.READ_ONLY);
+    }
+    
+    // Constructor (with role)
+    public User(int userId, String userName, String password, boolean active, LocalDateTime createDate, String createdBy, LocalDateTime lastUpdate, String lastUpdateBy, Role role){
         this.userId = userId;
         this.userName = userName;
         this.password = password;
@@ -46,6 +52,7 @@ public class User {
         this.createdBy = createdBy;
         this.lastUpdate = lastUpdate;
         this.lastUpdateBy = lastUpdateBy;
+        this.role = role;
     }
     
     //<editor-fold defaultstate="collapsed" desc="db variable setters and getters">
@@ -111,6 +118,14 @@ public class User {
     
     public void setLastUpdateBy(String lastUpdateBy){
         this.lastUpdateBy = lastUpdateBy;
+    }
+    
+    public Role getRole(){
+        return role;
+    }
+    
+    public void setRole(Role role){
+        this.role = role;
     }
     
     //</editor-fold>
