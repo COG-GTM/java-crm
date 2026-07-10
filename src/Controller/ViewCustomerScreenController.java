@@ -7,6 +7,7 @@ package Controller;
 
 import DAO.CustomerDaoImpl;
 import Model.Customer;
+import Model.Role;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
@@ -121,6 +122,10 @@ public class ViewCustomerScreenController extends GeneralController implements I
     // Schedule appointment for selected customer
     @FXML
     void onActionScheduleAppt(ActionEvent event) {
+        if(!hasPermission(Role.MANAGE_APPOINTMENTS)){
+            displayErrorAlert("You do not have permission to schedule appointments");
+            return;
+        }
         if(tvSelCustomer.isEmpty())
             selectionError();
         else{
@@ -132,12 +137,20 @@ public class ViewCustomerScreenController extends GeneralController implements I
     // Add a new customer
     @FXML
     void onActionAddCustomer(ActionEvent event) {
+        if(!hasPermission(Role.MANAGE_CUSTOMERS)){
+            displayErrorAlert("You do not have permission to add customers");
+            return;
+        }
         displayScreen(event, "/View/AddCustomerScreen.fxml");
     }
 
     // Update an existing customer
     @FXML
     void onActionUpdateCustomer(ActionEvent event) {
+        if(!hasPermission(Role.MANAGE_CUSTOMERS)){
+            displayErrorAlert("You do not have permission to update customers");
+            return;
+        }
         if(tvSelCustomer.isEmpty()){
             selectionError();
         }
@@ -150,6 +163,10 @@ public class ViewCustomerScreenController extends GeneralController implements I
     // Delete selected customer
     @FXML
     void onActionDeleteCustomer(ActionEvent event) {
+        if(!hasPermission(Role.DELETE_CUSTOMERS)){
+            displayErrorAlert("You do not have permission to delete customers");
+            return;
+        }
         if(tvSelCustomer.isEmpty()){
             selectionError();
         }

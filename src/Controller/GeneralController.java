@@ -5,6 +5,8 @@
  */
 package Controller;
 
+import Model.Role;
+import Model.User;
 import Utilities.RBMain;
 import Utilities.WindowSizing;
 import static Utilities.WindowSizing.setAlertCoordinates;
@@ -121,6 +123,31 @@ public class GeneralController {
         // Close alert if X button is clicked
         Window window = alert.getDialogPane().getScene().getWindow();
         window.setOnCloseRequest(e -> alert.close());
+    }
+    
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="authorization">
+    
+    // Returns the current user's role, defaulting to READ_ONLY (least privilege)
+    // if there is no logged-in user or the user has no role assigned.
+    protected Role getCurrentRole(){
+        User currentUser = User.getCurrentUser();
+        if(currentUser == null || currentUser.getRole() == null)
+            return Role.READ_ONLY;
+        return currentUser.getRole();
+    }
+    
+    // Returns true if the current user's role is one of the allowed roles.
+    // Authorization policy is centralized via the capability groups on the
+    // Role enum (e.g. Role.MANAGE_CUSTOMERS), which are passed in here.
+    protected boolean hasPermission(Role... allowedRoles){
+        Role currentRole = getCurrentRole();
+        for(Role allowed : allowedRoles){
+            if(currentRole == allowed)
+                return true;
+        }
+        return false;
     }
     
     //</editor-fold>

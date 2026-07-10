@@ -9,6 +9,7 @@ import DAO.AppointmentDaoImpl;
 import static DAO.AppointmentDaoImpl.checkAppointmentOverlap;
 import Model.Appointment;
 import Model.Customer;
+import Model.Role;
 import Model.User;
 import Utilities.BusinessException;
 import static Utilities.TimeFiles.createLocalDateTime;
@@ -136,6 +137,11 @@ public class AddAppointmentScreenController extends GeneralController implements
     }
     
     private void submit(Event event){
+        // Enforce role-based access before mutating data
+        if(!hasPermission(Role.MANAGE_APPOINTMENTS)){
+            displayErrorAlert("You do not have permission to add appointments");
+            return;
+        }
         // No Blank Text Fields Allowed
         if (checkFields(typeTxt)){
             displayMessage(errorLbl,errorStr);

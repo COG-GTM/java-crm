@@ -7,6 +7,7 @@ package Controller;
 
 import DAO.AppointmentDaoImpl;
 import Model.Appointment;
+import Model.Role;
 import Model.User;
 import java.net.URL;
 import java.sql.SQLException;
@@ -126,11 +127,19 @@ public class CalendarScreenController extends GeneralController implements Initi
     
     @FXML
     void onActionAddAppointment(ActionEvent event) {
+        if(!hasPermission(Role.MANAGE_APPOINTMENTS)){
+            displayErrorAlert("You do not have permission to add appointments");
+            return;
+        }
         displayScreen(event, "/View/AddAppointmentScreen.fxml");
     }
 
     @FXML
     void onActionUpdateAppointment(ActionEvent event) {
+        if(!hasPermission(Role.MANAGE_APPOINTMENTS)){
+            displayErrorAlert("You do not have permission to update appointments");
+            return;
+        }
         if(currentUserSelected()) {
             if(tvSelAppointment.isEmpty()){
                 displayErrorAlert("Select an appointment first");
@@ -145,6 +154,10 @@ public class CalendarScreenController extends GeneralController implements Initi
 
     @FXML
     void onActionDeleteAppointment(ActionEvent event) {
+        if(!hasPermission(Role.MANAGE_APPOINTMENTS)){
+            displayErrorAlert("You do not have permission to delete appointments");
+            return;
+        }
         if(currentUserSelected()){
             if(tvSelAppointment.isEmpty()){
                 displayErrorAlert("Select an appointment first");

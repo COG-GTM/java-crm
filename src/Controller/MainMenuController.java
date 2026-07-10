@@ -5,9 +5,13 @@
  */
 package Controller;
 
+import Model.Role;
 import Model.User;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 
 /**
@@ -15,7 +19,7 @@ import javafx.scene.control.Button;
  *
  * @author Austin Wong
  */
-public class MainMenuController extends GeneralController {
+public class MainMenuController extends GeneralController implements Initializable {
 
     //<editor-fold defaultstate="collapsed" desc="ui-variables">
     
@@ -32,6 +36,19 @@ public class MainMenuController extends GeneralController {
     private Button reportsBtn;
     
     //</editor-fold>
+
+    // Enable/disable menu options based on the current user's role.
+    // Reports are gated by the centralized Role.VIEW_REPORTS policy. The
+    // customers and appointments screens remain reachable for viewing by all
+    // roles; the add/update/delete actions on those screens are individually
+    // guarded via hasPermission(...), so READ_ONLY users cannot mutate data.
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        boolean canViewReports = hasPermission(Role.VIEW_REPORTS);
+        reportsBtn.setDisable(!canViewReports);
+        reportsBtn.setVisible(canViewReports);
+        reportsBtn.setManaged(canViewReports);
+    }
 
     //<editor-fold defaultstate="collapsed" desc="actions">
     
