@@ -8,6 +8,8 @@ package Controller;
 import DAO.AppointmentDaoImpl;
 import Model.Appointment;
 import Model.User;
+import Utilities.BusinessException;
+import Utilities.RBMain;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -145,6 +147,11 @@ public class CalendarScreenController extends GeneralController implements Initi
 
     @FXML
     void onActionDeleteAppointment(ActionEvent event) {
+        // Enforce delete permission (defense in depth in case the button is reachable)
+        if(!hasPermission(User.Permission.DELETE_APPOINTMENT)){
+            displayErrorAlert(RBMain.getRb().getString("deletenotpermitted"));
+            return;
+        }
         if(currentUserSelected()){
             if(tvSelAppointment.isEmpty()){
                 displayErrorAlert("Select an appointment first");
@@ -164,6 +171,9 @@ public class CalendarScreenController extends GeneralController implements Initi
                             catch (SQLException e) {
                                 Logger.getLogger("errorlog.txt").log(Level.WARNING, null, e);
                                 displayErrorAlert("Error occurred while deleting appointment from database");
+                            }
+                            catch (BusinessException e) {
+                                displayErrorAlert(e.getMessage());
                             }});
             }
         }
@@ -275,6 +285,10 @@ public class CalendarScreenController extends GeneralController implements Initi
         }
         userComboBox.setItems(userList);
         userComboBox.setValue(User.getCurrentUser());
+        
+        // Disable delete for roles that lack the permission
+        if(!hasPermission(User.Permission.DELETE_APPOINTMENT))
+            deleteBtn.setDisable(true);
         
         // Populate Table with Data
         refreshTable();

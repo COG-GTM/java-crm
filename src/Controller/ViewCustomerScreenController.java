@@ -7,6 +7,9 @@ package Controller;
 
 import DAO.CustomerDaoImpl;
 import Model.Customer;
+import Model.User;
+import Utilities.BusinessException;
+import Utilities.RBMain;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
@@ -113,6 +116,11 @@ public class ViewCustomerScreenController extends GeneralController implements I
         cityCol.setCellValueFactory(new PropertyValueFactory<>("city"));
         countryCol.setCellValueFactory(new PropertyValueFactory<>("country"));
         phoneCol.setCellValueFactory(new PropertyValueFactory<>("phone"));
+        
+        // Disable delete for roles that lack the permission
+        if(!hasPermission(User.Permission.DELETE_CUSTOMER))
+            deleteBtn.setDisable(true);
+        
         refreshTable();
     }
     
@@ -150,6 +158,11 @@ public class ViewCustomerScreenController extends GeneralController implements I
     // Delete selected customer
     @FXML
     void onActionDeleteCustomer(ActionEvent event) {
+        // Enforce delete permission (defense in depth in case the button is reachable)
+        if(!hasPermission(User.Permission.DELETE_CUSTOMER)){
+            displayErrorAlert(RBMain.getRb().getString("deletenotpermitted"));
+            return;
+        }
         if(tvSelCustomer.isEmpty()){
             selectionError();
         }
@@ -167,6 +180,9 @@ public class ViewCustomerScreenController extends GeneralController implements I
                     catch (SQLException e) {
                         Logger.getLogger("errorlog.txt").log(Level.WARNING, null, e);
                         displayErrorAlert("Error deleting customer from database");
+                    }
+                    catch (BusinessException e) {
+                        displayErrorAlert(e.getMessage());
                     }
                 });
         }

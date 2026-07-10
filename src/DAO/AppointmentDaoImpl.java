@@ -10,6 +10,7 @@ import Model.Appointment;
 import Model.Customer;
 import Model.User;
 import static Model.User.getCurrentUser;
+import Utilities.BusinessException;
 import Utilities.RBMain;
 import static Utilities.TimeFiles.dbStrNow;
 import static Utilities.TimeFiles.dbStrToLocalDateTime;
@@ -222,7 +223,11 @@ public class AppointmentDaoImpl extends GeneralDaoImpl{
     }
         
     // Delete appointment from DB
-    public static int deleteAppointment(int appointmentId) throws SQLException {
+    public static int deleteAppointment(int appointmentId) throws SQLException, BusinessException {
+        // Authorization check at the persistence layer (defense in depth)
+        if(!User.currentUserHasPermission(User.Permission.DELETE_APPOINTMENT))
+            throw new BusinessException(RBMain.getRb().getString("deletenotpermitted"));
+        
         String deleteStatement = "DELETE FROM appointment WHERE appointmentId = ?";
         PreparedStatement ps = setPreparedStatement(deleteStatement);
         ps.setInt(1, appointmentId);

@@ -13,6 +13,55 @@ import java.time.LocalDateTime;
  */
 public class User {
     
+    //<editor-fold defaultstate="collapsed" desc="role and permission enums">
+    
+    // Application roles ordered by privilege level (higher level = more access)
+    public enum Role {
+        USER(1),
+        MANAGER(2),
+        ADMIN(3);
+        
+        private final int level;
+        
+        Role(int level){
+            this.level = level;
+        }
+        
+        public int getLevel(){
+            return level;
+        }
+        
+        // Parse a role from a database string, defaulting to USER when null/unknown
+        public static Role fromString(String roleStr){
+            if(roleStr == null)
+                return USER;
+            try{
+                return Role.valueOf(roleStr.trim().toUpperCase());
+            }
+            catch(IllegalArgumentException e){
+                return USER;
+            }
+        }
+    }
+    
+    // Discrete permissions, each requiring a minimum role
+    public enum Permission {
+        VIEW_REPORTS(Role.MANAGER),
+        DELETE_CUSTOMER(Role.MANAGER),
+        DELETE_APPOINTMENT(Role.MANAGER);
+        
+        private final Role minRole;
+        
+        Permission(Role minRole){
+            this.minRole = minRole;
+        }
+        
+        public Role getMinRole(){
+            return minRole;
+        }
+    }
+    //</editor-fold>
+    
     //<editor-fold defaultstate="collapsed" desc="static variables and methods">
     private static User currentUser;
     
@@ -22,6 +71,11 @@ public class User {
     
     public static void setCurrentUser(User user){
         currentUser = user;
+    }
+    
+    // Convenience null-safe check against the currently logged-in user
+    public static boolean currentUserHasPermission(Permission permission){
+        return currentUser != null && currentUser.hasPermission(permission);
     }
     //</editor-fold>
     
@@ -34,10 +88,11 @@ public class User {
     private String createdBy;
     private LocalDateTime lastUpdate;
     private String lastUpdateBy;
+    private Role role;
     //</editor-fold>
     
     // Constructor
-    public User(int userId, String userName, String password, boolean active, LocalDateTime createDate, String createdBy, LocalDateTime lastUpdate, String lastUpdateBy){
+    public User(int userId, String userName, String password, boolean active, LocalDateTime createDate, String createdBy, LocalDateTime lastUpdate, String lastUpdateBy, Role role){
         this.userId = userId;
         this.userName = userName;
         this.password = password;
@@ -46,6 +101,7 @@ public class User {
         this.createdBy = createdBy;
         this.lastUpdate = lastUpdate;
         this.lastUpdateBy = lastUpdateBy;
+        this.role = role;
     }
     
     //<editor-fold defaultstate="collapsed" desc="db variable setters and getters">
@@ -111,6 +167,28 @@ public class User {
     
     public void setLastUpdateBy(String lastUpdateBy){
         this.lastUpdateBy = lastUpdateBy;
+    }
+    
+    public Role getRole(){
+        return role;
+    }
+    
+    public void setRole(Role role){
+        this.role = role;
+    }
+    
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="permission logic">
+    
+    // Returns true if this user's role is at least as privileged as the given role
+    public boolean isAtLeast(Role r){
+        return role != null && r != null && role.getLevel() >= r.getLevel();
+    }
+    
+    // Returns true if this user's role grants the given permission
+    public boolean hasPermission(Permission permission){
+        return permission != null && isAtLeast(permission.getMinRole());
     }
     
     //</editor-fold>

@@ -14,6 +14,35 @@ Steps:
 2.	Download [dist.zip file](dist.zip)
 3.	Extract files and run java-crm.jar
 
+## Role-Based Access Control (RBAC)
+
+Access to features is restricted based on the logged-in user's role. Three roles are supported:
+
+| Role      | Customer/Appointment view & create/update | Delete customers/appointments | Reports |
+|-----------|-------------------------------------------|-------------------------------|---------|
+| `ADMIN`   | Yes                                       | Yes                           | Yes     |
+| `MANAGER` | Yes                                       | Yes                           | Yes     |
+| `USER`    | Yes                                       | No                            | No      |
+
+Roles are stored in a `role` column on the `user` table. Restrictions are enforced in the UI (buttons are hidden/disabled) and again at the navigation and persistence layers (defense in depth).
+
+### Required database migration
+
+There are no `.sql` migration files in this repo, so apply the following manually before running the updated application. This adds the `role` column and backfills existing rows to a sensible default (`USER`):
+
+```sql
+ALTER TABLE user ADD COLUMN role VARCHAR(16) NOT NULL DEFAULT 'USER';
+
+-- Backfill any existing rows (redundant if the DEFAULT above was applied, but safe to run):
+UPDATE user SET role = 'USER' WHERE role IS NULL OR role = '';
+
+-- Promote specific accounts as needed, e.g.:
+-- UPDATE user SET role = 'ADMIN'   WHERE userName = 'admin';
+-- UPDATE user SET role = 'MANAGER' WHERE userName = 'manager';
+```
+
+Valid values are `ADMIN`, `MANAGER`, and `USER`. Unknown or null values are treated as `USER` at runtime.
+
 ## Using the Application
 The login screen will appear upon starting the application.
 
