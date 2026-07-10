@@ -6,8 +6,11 @@
 package Controller;
 
 import Model.User;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 
 /**
@@ -15,7 +18,7 @@ import javafx.scene.control.Button;
  *
  * @author Austin Wong
  */
-public class MainMenuController extends GeneralController {
+public class MainMenuController extends GeneralController implements Initializable {
 
     //<editor-fold defaultstate="collapsed" desc="ui-variables">
     
@@ -32,6 +35,15 @@ public class MainMenuController extends GeneralController {
     private Button reportsBtn;
     
     //</editor-fold>
+
+    // Hide features the current user's role cannot access
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        if(!hasPermission(User.Permission.VIEW_REPORTS)){
+            reportsBtn.setVisible(false);
+            reportsBtn.setManaged(false);
+        }
+    }
 
     //<editor-fold defaultstate="collapsed" desc="actions">
     

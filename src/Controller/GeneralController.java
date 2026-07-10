@@ -5,6 +5,7 @@
  */
 package Controller;
 
+import Model.User;
 import Utilities.RBMain;
 import Utilities.WindowSizing;
 import static Utilities.WindowSizing.setAlertCoordinates;
@@ -51,6 +52,11 @@ public class GeneralController {
     
     // Primary method used to switch screens
     protected void displayScreen(Event event, String resourcePath) {
+        // Enforce role-based access before navigating (defense in depth for hidden buttons)
+        if(!isAuthorizedForScreen(resourcePath)){
+            displayErrorAlert(RBMain.getRb().getString("accessdenied"));
+            return;
+        }
         stage = (Stage) ((Control) event.getSource()).getScene().getWindow();
         try{
             root = FXMLLoader.load(getClass().getResource(resourcePath), RBMain.getRb());
@@ -74,6 +80,22 @@ public class GeneralController {
             displayScreen(event,"/View/CalendarScreen.fxml");
         else if(lastScreen.equals(AppScreen.VIEWCUSTOMERSCREEN))
             displayScreen(event,"/View/ViewCustomerScreen.fxml");
+    }
+    
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="authorization methods">
+    
+    // Null-safe permission check for the current user
+    protected boolean hasPermission(User.Permission permission){
+        return User.currentUserHasPermission(permission);
+    }
+    
+    // Returns true if the current user may open the given screen
+    protected boolean isAuthorizedForScreen(String resourcePath){
+        if(resourcePath.contains("ReportScreen"))
+            return hasPermission(User.Permission.VIEW_REPORTS);
+        return true;
     }
     
     //</editor-fold>

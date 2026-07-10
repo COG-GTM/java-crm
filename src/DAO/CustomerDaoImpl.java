@@ -7,7 +7,10 @@ package DAO;
 
 import static DAO.DBQuery.setPreparedStatement;
 import Model.Customer;
+import Model.User;
 import static Model.User.getCurrentUser;
+import Utilities.BusinessException;
+import Utilities.RBMain;
 import static Utilities.TimeFiles.dbStrNow;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -117,7 +120,11 @@ public class CustomerDaoImpl extends GeneralDaoImpl{
     }    
     
     // Delete customer and linked appointments
-    public static int deleteCustomer(int customerId) throws SQLException {
+    public static int deleteCustomer(int customerId) throws SQLException, BusinessException {
+        // Authorization check at the persistence layer (defense in depth)
+        if(!User.currentUserHasPermission(User.Permission.DELETE_CUSTOMER))
+            throw new BusinessException(RBMain.getRb().getString("deletenotpermitted"));
+        
         String deleteStatement = "DELETE FROM appointment WHERE customerId = ?";
         PreparedStatement ps = setPreparedStatement(deleteStatement);
 

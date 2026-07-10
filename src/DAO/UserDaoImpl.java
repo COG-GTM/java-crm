@@ -33,7 +33,8 @@ public class UserDaoImpl extends GeneralDaoImpl {
         if (rs.next()){
             //Set currentUser
             rs.getMetaData();
-            User.setCurrentUser(new User(rs.getInt("userId"),userName,"",true,createDateLdt,createdBy,lastUpdateLdt,lastUpdateBy)); // No need to hang onto password
+            User.Role role = User.Role.fromString(rs.getString("role"));
+            User.setCurrentUser(new User(rs.getInt("userId"),userName,"",true,createDateLdt,createdBy,lastUpdateLdt,lastUpdateBy,role)); // No need to hang onto password
             return true;
         }
         else
@@ -57,7 +58,8 @@ public class UserDaoImpl extends GeneralDaoImpl {
             String password = ""; // Leave password blank - no need for it
             Boolean active = rs.getBoolean("active");
             rs.getMetaData();
-            User user = new User(userId,userName,password,active,createDateLdt,createdBy,lastUpdateLdt,lastUpdateBy);
+            User.Role role = User.Role.fromString(rs.getString("role"));
+            User user = new User(userId,userName,password,active,createDateLdt,createdBy,lastUpdateLdt,lastUpdateBy,role);
             
             allUsers.add(user);
         }

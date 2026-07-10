@@ -16,6 +16,7 @@ import Model.Appointment;
 import Model.City;
 import Model.Country;
 import Model.Customer;
+import Utilities.BusinessException;
 import static Utilities.TimeFiles.localDateTimeToUITime;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -36,7 +37,7 @@ public class TestConditions {
     public static ObservableList<Customer> testCustomers = FXCollections.observableArrayList();
     public static ObservableList<Appointment> testAppointments = FXCollections.observableArrayList();
     
-    public static void deleteTestCustomers() throws SQLException {
+    public static void deleteTestCustomers() throws SQLException, BusinessException {
         
         for(Customer c : testCustomers){
             CustomerDaoImpl.deleteCustomer(c.getCustomerId());
@@ -44,7 +45,7 @@ public class TestConditions {
         
     }
     
-    public static void deleteAppointments() throws SQLException {
+    public static void deleteAppointments() throws SQLException, BusinessException {
         
         for (Appointment a : testAppointments){
             AppointmentDaoImpl.deleteAppointment(a.getAppointmentId());
@@ -52,7 +53,7 @@ public class TestConditions {
         
     }
     
-    public static void cleanUp() throws SQLException {
+    public static void cleanUp() throws SQLException, BusinessException {
         
         deleteAppointments();
         deleteTestCustomers();
