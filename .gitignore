@@ -1,0 +1,4 @@
+target/
+*.class
+errorlog.txt
+userlog.txt

@@ -55,6 +55,9 @@ public class ViewCustomerScreenController extends GeneralController implements I
     private Button scheduleApptBtn;
     
     @FXML
+    private Button notesBtn;
+
+    @FXML
     private Button addBtn;
 
     @FXML
@@ -129,6 +132,17 @@ public class ViewCustomerScreenController extends GeneralController implements I
         }
     }
     
+    // View/edit notes for selected customer
+    @FXML
+    void onActionViewNotes(ActionEvent event) {
+        if(tvSelCustomer.isEmpty())
+            selectionError();
+        else{
+            Customer.setCurrentCustomer(tvSelCustomer.getSelectedItem());
+            displayScreen(event, "/View/NotesScreen.fxml");
+        }
+    }
+
     // Add a new customer
     @FXML
     void onActionAddCustomer(ActionEvent event) {
