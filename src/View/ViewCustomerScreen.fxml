@@ -36,6 +36,7 @@
                          <Insets right="100.0" />
                       </HBox.margin>
                    </Button>
+                   <Button fx:id="notesBtn" minHeight="30.0" mnemonicParsing="false" onAction="#onActionViewNotes" prefHeight="30.0" prefWidth="100.0" text="Notes" />
                    <Button fx:id="addBtn" minHeight="30.0" mnemonicParsing="false" onAction="#onActionAddCustomer" prefHeight="30.0" prefWidth="100.0" text="Add" />
                    <Button fx:id="updateBtn" layoutX="320.0" layoutY="10.0" minHeight="30.0" mnemonicParsing="false" onAction="#onActionUpdateCustomer" prefHeight="30.0" prefWidth="100.0" text="Update" />
                    <Button fx:id="deleteBtn" layoutX="440.0" layoutY="10.0" minHeight="30.0" mnemonicParsing="false" onAction="#onActionDeleteCustomer" prefHeight="30.0" prefWidth="100.0" text="Delete" />

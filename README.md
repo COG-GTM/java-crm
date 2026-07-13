@@ -1,7 +1,7 @@
 # Java CRM
 
 ## Description
-This Java application serves as a customer relationship management (CRM) system. It allows users to add, update, and remove customer data; manage appointments in a calendar; and run reports on appointment data.
+This Java application serves as a customer relationship management (CRM) system. It allows users to add, update, and remove customer data; read and edit customer notes; manage appointments in a calendar; and run reports on appointment data.
 
 This application was developed to fulfill the requirements for an Advanced Java Concepts academic project at WGU. It demonstrates database and file server application development skills. The application incorporates lambda expressions; advanced exception control mechanisms to improve user experience and application stability; localization and date/time APIs to support end-users in various geographical regions; and streams and filters to manipulate data more efficiently.
 
@@ -34,6 +34,22 @@ Use the buttons to navigate to other screens where you can view/manage customers
 ![Add Appointments](img/add-appointment-screen.png)
 
 ![Reports Screen](img/reports-screen.png)
+
+### Customer Notes
+Each customer can have any number of free-form notes. From the **Customer List** screen, select a customer and click **Notes** to open the notes screen. There you can:
+
+* Read existing notes for the customer in the table (newest first).
+* Add a new note by typing into the text area and clicking **Add**.
+* Edit a note by selecting it, changing the text, and clicking **Update**.
+* Remove a note by selecting it and clicking **Delete** (a confirmation prompt is shown).
+
+Note text is validated (it cannot be empty and is limited to 5,000 characters), note operations are logged to `userlog.txt`, and deleting a customer also removes all of that customer's notes.
+
+Customer Notes require a `note` table in the CRM database. Apply the schema once with the provided script:
+
+```
+mysql -h <host> -u <user> -p <database> < sql/note.sql
+```
 
 
 ## Future Improvements

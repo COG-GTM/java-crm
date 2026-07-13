@@ -65,6 +65,32 @@ public class LogFiles {
             }
         }
     }
+
+    // Logs a note operation (ADD/UPDATE/DELETE) to the user activity file
+    public static void logNoteActivity(String action, int customerId) {
+
+        String filename = "userlog.txt";
+        File file = new File(filename);
+        String userName = User.getCurrentUser() != null ? User.getCurrentUser().getUserName() : "unknown";
+        String msg = "USER " + userName + " performed note " + action + " for customer " + customerId + " at " + ZonedDateTime.now();
+
+        if(!file.exists()){
+            try(PrintWriter outputFile = new PrintWriter(filename)){
+                outputFile.println(msg);
+            }
+            catch(FileNotFoundException e){
+                log.log(Level.INFO,"Could not write to userlog.txt: {0}", msg);
+            }
+        }
+        else{
+            try(PrintWriter outputFile = new PrintWriter(new FileWriter(filename,true))){
+                outputFile.println(msg);
+            }
+            catch(IOException e){
+                log.log(Level.INFO,"Could not write to userlog.txt: {0}", msg);
+            }
+        }
+    }
  
 // Log Hierarchy
 // SEVERE (highest)

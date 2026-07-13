@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1000.0" styleClass="border-pane" stylesheets="@../Resources/generalStylesheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.NotesScreenController">
+   <center>
+      <VBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="760.0" prefWidth="1000.0" spacing="15.0" styleClass="vbox" stylesheets="@../Resources/generalStylesheet.css" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="CUSTOMER NOTES">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="customerLbl" text="Customer">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <TableView fx:id="noteTableView" prefHeight="320.0" prefWidth="960.0">
+              <columns>
+                  <TableColumn fx:id="idCol" minWidth="80.0" prefWidth="80.0" text="Note ID" />
+                  <TableColumn fx:id="previewCol" minWidth="440.0" prefWidth="440.0" text="Note" />
+                  <TableColumn fx:id="createdByCol" minWidth="160.0" prefWidth="160.0" text="Created By" />
+                  <TableColumn fx:id="lastUpdateCol" minWidth="160.0" prefWidth="160.0" text="Last Updated" />
+              </columns>
+            </TableView>
+            <Label text="Note Text" />
+            <TextArea fx:id="noteTextArea" prefHeight="150.0" prefWidth="960.0" promptText="Enter note text" wrapText="true" />
+            <Label fx:id="errorLbl" />
+            <HBox alignment="CENTER" prefHeight="25.0" prefWidth="200.0" spacing="20.0">
+               <children>
+                  <Button fx:id="addBtn" minHeight="30.0" mnemonicParsing="false" onAction="#onActionAddNote" prefHeight="30.0" prefWidth="100.0" text="Add" />
+                  <Button fx:id="updateBtn" minHeight="30.0" mnemonicParsing="false" onAction="#onActionUpdateNote" prefHeight="30.0" prefWidth="100.0" text="Update" />
+                  <Button fx:id="deleteBtn" minHeight="30.0" mnemonicParsing="false" onAction="#onActionDeleteNote" prefHeight="30.0" prefWidth="100.0" text="Delete" />
+                  <Button fx:id="backBtn" minHeight="30.0" mnemonicParsing="false" onAction="#onActionReturn" prefHeight="30.0" prefWidth="100.0" text="Back">
+                     <HBox.margin>
+                        <Insets left="100.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
+   </center>
+</BorderPane>
