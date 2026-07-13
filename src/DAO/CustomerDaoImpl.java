@@ -116,11 +116,16 @@ public class CustomerDaoImpl extends GeneralDaoImpl{
         return getCustomer(customerName, addressId);
     }    
     
-    // Delete customer and linked appointments
+    // Delete customer and linked appointments and notes
     public static int deleteCustomer(int customerId) throws SQLException {
         String deleteStatement = "DELETE FROM appointment WHERE customerId = ?";
         PreparedStatement ps = setPreparedStatement(deleteStatement);
 
+        ps.setInt(1, customerId);
+        ps.execute();
+
+        deleteStatement = "DELETE FROM note WHERE customerId = ?";
+        ps = setPreparedStatement(deleteStatement);
         ps.setInt(1, customerId);
         ps.execute();
         

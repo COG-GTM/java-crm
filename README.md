@@ -35,6 +35,62 @@ Use the buttons to navigate to other screens where you can view/manage customers
 
 ![Reports Screen](img/reports-screen.png)
 
+## Customer Notes
+The application supports free-text notes attached to individual customers.
+
+Each note stores the note text plus the standard audit columns
+(`createDate`/`createdBy`/`lastUpdate`/`lastUpdateBy`) and is linked to a
+customer via `customerId`.
+
+### Using the Notes screen
+1. From the **Main Menu**, click **Customers** to open the customer list.
+2. Select a customer, then click **Notes**.
+3. On the **Customer Notes** screen you can:
+   * **Read** existing notes by selecting a row (the text loads into the editor).
+   * **New** – clear the editor to write a new note, then **Save**.
+   * **Save** – with a note selected this updates it; with no selection it adds a new note.
+   * **Delete** – remove the selected note (after confirmation).
+   * **Back** – return to the customer list.
+
+Note text is validated before saving: it must be non-empty and at most
+`Note.MAX_NOTE_LENGTH` (1000) characters.
+
+Deleting a customer cascades to their notes: removing a customer deletes that
+customer's appointments **and** notes.
+
+### Database schema
+The feature requires a `note` table. Apply the migration script against the
+MySQL database configured in `src/DAO/DBConnection.java`:
+
+```
+mysql -h <host> -u <user> -p <database> < sql/note.sql
+```
+
+The script (`sql/note.sql`) creates the `note` table with a foreign key to
+`customer(customerId)` and the audit columns.
+
+## Testing
+Unit and integration tests live under the `test/` directory, mirroring the
+`src/` package layout, and use JUnit 4.
+
+* **Unit tests** – `test/Model/NoteTest.java` covers the `Note` model and its
+  note-text validation rules. These have no JavaFX or database dependency and
+  can run standalone with only JUnit and Hamcrest on the classpath, e.g.:
+
+  ```
+  javac -cp junit-4.13.2.jar -d out src/Model/Note.java test/Model/NoteTest.java
+  java  -cp out:junit-4.13.2.jar:hamcrest-core-1.3.jar org.junit.runner.JUnitCore Model.NoteTest
+  ```
+
+* **Integration tests** – `test/DAO/NoteDaoImplTest.java` exercises
+  `NoteDaoImpl` CRUD against MySQL and verifies the cascade delete of notes when
+  a customer is removed. These require network access to the configured MySQL
+  server and the JavaFX runtime; if the database connection cannot be
+  established the tests are skipped rather than failed. The MySQL JDBC driver
+  (bundled in `dist.zip` under `dist/lib/`) must be on the classpath.
+
+In NetBeans, add JUnit 4 to the project's test libraries and run the tests via
+**Run > Test Project**.
 
 ## Future Improvements
 * Optimize colors and fonts for improved accessibility
