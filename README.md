@@ -36,6 +36,39 @@ Use the buttons to navigate to other screens where you can view/manage customers
 ![Reports Screen](img/reports-screen.png)
 
 
+## Testing
+This project includes a JUnit 5 (Jupiter) unit test suite driven by Maven, with Mockito for mocking (including static methods).
+
+Prerequisites:
+* JDK 11 or higher (JavaFX is pulled in as a Maven dependency, so no separate JavaFX SDK is required)
+* Maven 3.6+
+
+Layout:
+* Production sources live in `src/` (non-standard NetBeans layout, configured via `pom.xml`).
+* Tests live in `test/`, mirroring the production package structure (`Model`, `DAO`, `Controller`, `Utilities`).
+* Shared fixtures/builders for sample model objects live in the `testsupport` package (`test/testsupport/Fixtures.java`).
+
+Run the full test suite:
+```
+mvn test
+```
+
+Run a single test class:
+```
+mvn test -Dtest=UserTest
+```
+
+Coverage (97 tests across all layers):
+* **Model** (`test/Model/`) — POJO constructors, getters/setters, `toString`, and static "current" state (`User`/`Customer`/`Appointment`).
+* **DAO** (`test/DAO/`) — `UserDaoImpl`, `CountryDaoImpl`, `CityDaoImpl`, `AddressDaoImpl`, `CustomerDaoImpl`, `AppointmentDaoImpl`, `GeneralDaoImpl`; SQL parameter binding and result-row mapping verified against a mocked JDBC layer.
+* **Controller** (`test/Controller/`) — non-UI logic such as `currentUserSelected()`, the report-dispatch switch, and the country/city/address/customer find-or-create flow, with DAO statics mocked.
+* **Utilities** (`test/Utilities/`) — `TimeFiles` (date/time conversion + formatting), `BusinessException`, `RBMain` (i18n resource bundles), `LogFiles`.
+
+Notes:
+* The DAO layer's JDBC access (`Connection`, `PreparedStatement`, `ResultSet`) is mocked with Mockito; tests never touch a live database.
+* Controller tests boot the JavaFX toolkit once (`test/Controller/JavaFxTestBase.java`) and run control-touching code on the JavaFX Application Thread; they use reflection to inject collaborators into private `@FXML` fields rather than refactoring production code. A JavaFX runtime is required to run the Controller tests.
+* `Utilities/WindowSizing` is intentionally not unit-tested — it is pure `Screen`/`Stage`/`Alert` JavaFX code that requires a live display.
+
 ## Future Improvements
 * Optimize colors and fonts for improved accessibility
 * Improve design of reports screen
