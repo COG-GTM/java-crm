@@ -58,9 +58,16 @@ Run a single test class:
 mvn test -Dtest=UserTest
 ```
 
+Coverage (97 tests across all layers):
+* **Model** (`test/Model/`) — POJO constructors, getters/setters, `toString`, and static "current" state (`User`/`Customer`/`Appointment`).
+* **DAO** (`test/DAO/`) — `UserDaoImpl`, `CountryDaoImpl`, `CityDaoImpl`, `AddressDaoImpl`, `CustomerDaoImpl`, `AppointmentDaoImpl`, `GeneralDaoImpl`; SQL parameter binding and result-row mapping verified against a mocked JDBC layer.
+* **Controller** (`test/Controller/`) — non-UI logic such as `currentUserSelected()`, the report-dispatch switch, and the country/city/address/customer find-or-create flow, with DAO statics mocked.
+* **Utilities** (`test/Utilities/`) — `TimeFiles` (date/time conversion + formatting), `BusinessException`, `RBMain` (i18n resource bundles), `LogFiles`.
+
 Notes:
 * The DAO layer's JDBC access (`Connection`, `PreparedStatement`, `ResultSet`) is mocked with Mockito; tests never touch a live database.
-* Controller tests initialize the JavaFX toolkit in a fixture where a runtime is required and otherwise exercise pure logic; they do not require a display server for the non-UI logic they cover.
+* Controller tests boot the JavaFX toolkit once (`test/Controller/JavaFxTestBase.java`) and run control-touching code on the JavaFX Application Thread; they use reflection to inject collaborators into private `@FXML` fields rather than refactoring production code. A JavaFX runtime is required to run the Controller tests.
+* `Utilities/WindowSizing` is intentionally not unit-tested — it is pure `Screen`/`Stage`/`Alert` JavaFX code that requires a live display.
 
 ## Future Improvements
 * Optimize colors and fonts for improved accessibility
