@@ -36,6 +36,32 @@ Use the buttons to navigate to other screens where you can view/manage customers
 ![Reports Screen](img/reports-screen.png)
 
 
+## Testing
+This project includes a JUnit 5 (Jupiter) unit test suite driven by Maven, with Mockito for mocking (including static methods).
+
+Prerequisites:
+* JDK 11 or higher (JavaFX is pulled in as a Maven dependency, so no separate JavaFX SDK is required)
+* Maven 3.6+
+
+Layout:
+* Production sources live in `src/` (non-standard NetBeans layout, configured via `pom.xml`).
+* Tests live in `test/`, mirroring the production package structure (`Model`, `DAO`, `Controller`, `Utilities`).
+* Shared fixtures/builders for sample model objects live in the `testsupport` package (`test/testsupport/Fixtures.java`).
+
+Run the full test suite:
+```
+mvn test
+```
+
+Run a single test class:
+```
+mvn test -Dtest=UserTest
+```
+
+Notes:
+* The DAO layer's JDBC access (`Connection`, `PreparedStatement`, `ResultSet`) is mocked with Mockito; tests never touch a live database.
+* Controller tests initialize the JavaFX toolkit in a fixture where a runtime is required and otherwise exercise pure logic; they do not require a display server for the non-UI logic they cover.
+
 ## Future Improvements
 * Optimize colors and fonts for improved accessibility
 * Improve design of reports screen
