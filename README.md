@@ -58,10 +58,10 @@ Run a single test class:
 mvn test -Dtest=UserTest
 ```
 
-Coverage (97 tests across all layers):
+Coverage (109 tests across all layers):
 * **Model** (`test/Model/`) — POJO constructors, getters/setters, `toString`, and static "current" state (`User`/`Customer`/`Appointment`).
 * **DAO** (`test/DAO/`) — `UserDaoImpl`, `CountryDaoImpl`, `CityDaoImpl`, `AddressDaoImpl`, `CustomerDaoImpl`, `AppointmentDaoImpl`, `GeneralDaoImpl`; SQL parameter binding and result-row mapping verified against a mocked JDBC layer.
-* **Controller** (`test/Controller/`) — non-UI logic such as `currentUserSelected()`, the report-dispatch switch, and the country/city/address/customer find-or-create flow, with DAO statics mocked.
+* **Controller** (`test/Controller/`) — non-UI logic such as `currentUserSelected()`, the report-dispatch switch, the country/city/address/customer find-or-create flow, and the add/update appointment validation guards (required field, date, customer, start-before-end, business-hours, and overlap rejection), with DAO statics mocked.
 * **Utilities** (`test/Utilities/`) — `TimeFiles` (date/time conversion + formatting), `BusinessException`, `RBMain` (i18n resource bundles), `LogFiles`.
 
 Notes:
