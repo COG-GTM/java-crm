@@ -1,0 +1,24 @@
+name: tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      # TestFX runs fully headless via Monocle (configured in pom.xml surefire
+      # argLine), so no virtual display server is required.
+      - name: Run tests
+        run: mvn -B test
