@@ -26,8 +26,8 @@ import java.util.logging.Logger;
 public class DBConnection {
 
     private static final String CONFIG_FILE = "db.properties";
-    private static final String DEFAULT_CONNECTION_PARAMS =
-            "serverTimezone=UTC&useSSL=true&allowPublicKeyRetrieval=true";
+    private static final String[] DEFAULT_CONNECTION_PARAMS = {
+            "serverTimezone=UTC", "useSSL=true", "allowPublicKeyRetrieval=true"};
 
     private static Connection conn = null;
 
@@ -38,7 +38,7 @@ public class DBConnection {
 
             String url = withConnectionParams(value(config, "db.url", "JAVACRM_DB_URL"));
             String username = value(config, "db.user", "JAVACRM_DB_USER");
-            String password = value(config, "db.password", "JAVACRM_DB_PASSWORD");
+            String password = password(config);
 
             if (url == null || username == null || password == null) {
                 throw new SQLException("Database configuration missing. Set JAVACRM_DB_URL, "
@@ -109,17 +109,32 @@ public class DBConnection {
 
     }
 
+    private static String password(Properties config) {
+
+        String fromEnvironment = System.getenv("JAVACRM_DB_PASSWORD");
+        if (fromEnvironment != null) {
+            return fromEnvironment;
+        }
+
+        return config.getProperty("db.password");
+
+    }
+
     private static String withConnectionParams(String url) {
 
         if (url == null) {
             return null;
         }
 
-        if (url.contains("serverTimezone=")) {
-            return url;
+        StringBuilder withParams = new StringBuilder(url);
+        for (String param : DEFAULT_CONNECTION_PARAMS) {
+            String name = param.substring(0, param.indexOf('=') + 1);
+            if (!withParams.toString().contains(name)) {
+                withParams.append(withParams.indexOf("?") < 0 ? "?" : "&").append(param);
+            }
         }
 
-        return url + (url.contains("?") ? "&" : "?") + DEFAULT_CONNECTION_PARAMS;
+        return withParams.toString();
 
     }
 }
