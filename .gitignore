@@ -1,3 +1,5 @@
 target/
 db.properties
 *.class
+errorlog.txt*
+userlog.txt
