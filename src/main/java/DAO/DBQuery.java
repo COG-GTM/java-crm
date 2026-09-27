@@ -20,6 +20,9 @@ public class DBQuery {
     // Create Prepared Statement Object
     public static PreparedStatement setPreparedStatement(String sqlStatement) throws SQLException {
         Connection conn = DBConnection.getConnection();
+        if (conn == null) {
+            throw new SQLException("No database connection available.");
+        }
         preparedStatement = conn.prepareStatement(sqlStatement);
         return preparedStatement;
     }

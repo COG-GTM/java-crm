@@ -45,9 +45,7 @@ public class JavaCRM extends Application {
         
         LogFiles.setupLogger();
         DBConnection.startConnection(); // Connect to MySQL DB
-        //TestConditions.createTestCustomer(); //***AAW: TESTING
         launch(args);
-        //TestConditions.cleanUp(); //***AAW: TESTING
         DBConnection.closeConnection(); // Disconnect from MySQL DB
         
     }

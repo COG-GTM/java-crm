@@ -7,12 +7,23 @@ This application was developed to fulfill the requirements for an Advanced Java 
 
 ## Installation
 Prerequisites:
-* Download and install [Java Runtime Environment (JRE) 8](https://www.oracle.com/java/technologies/javase-jre8-downloads.html) or higher
+* JDK 21
+* Apache Maven 3.8 or higher
+* A reachable MySQL 8 database
+
+Database configuration is read from the environment variables `JAVACRM_DB_URL`, `JAVACRM_DB_USER` and
+`JAVACRM_DB_PASSWORD`, or from a `db.properties` file in the working directory or on the classpath
+(see [db.properties.example](db.properties.example)).
 
 Steps:
 1.	Install the prerequisite applications
-2.	Download [dist.zip file](dist.zip)
-3.	Extract files and run java-crm.jar
+2.	Configure the database settings as described above
+3.	Build and run the application:
+
+```
+mvn compile
+mvn javafx:run
+```
 
 ## Using the Application
 The login screen will appear upon starting the application.
