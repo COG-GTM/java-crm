@@ -1,0 +1,5 @@
+# Copy to db.properties (git-ignored) or set the equivalent environment variables:
+# JAVACRM_DB_URL, JAVACRM_DB_USER, JAVACRM_DB_PASSWORD
+db.url=jdbc:mysql://localhost:3306/U07k1T?serverTimezone=UTC&useSSL=true&allowPublicKeyRetrieval=true
+db.user=
+db.password=
