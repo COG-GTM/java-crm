@@ -8,10 +8,10 @@ package DAO;
 import static DAO.DBQuery.setPreparedStatement;
 import Model.Address;
 import static Model.User.getCurrentUser;
-import static Utilities.TimeFiles.dbStrNow;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 /**
  * 
@@ -78,16 +78,16 @@ public class AddressDaoImpl extends GeneralDaoImpl {
         PreparedStatement ps = setPreparedStatement(createStatement);
         
         String userName = getCurrentUser().getUserName();
-        String time = dbStrNow();
+        LocalDateTime now = LocalDateTime.now();
         
         ps.setString(1, address);
         ps.setString(2, address2);
         ps.setInt(3, cityId);
         ps.setString(4,postalCode);
         ps.setString(5,phone);
-        ps.setString(6, time);
+        bindDateTime(ps, 6, now);
         ps.setString(7, userName);
-        ps.setString(8, time);
+        bindDateTime(ps, 8, now);
         ps.setString(9, userName);
         ps.execute();
         

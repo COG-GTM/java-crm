@@ -8,10 +8,10 @@ package DAO;
 import static DAO.DBQuery.setPreparedStatement;
 import Model.Country;
 import static Model.User.getCurrentUser;
-import static Utilities.TimeFiles.dbStrNow;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -72,12 +72,12 @@ public class CountryDaoImpl extends GeneralDaoImpl {
         PreparedStatement ps = setPreparedStatement(createStatement);
         
         String userName = getCurrentUser().getUserName();
-        String time = dbStrNow();
+        LocalDateTime now = LocalDateTime.now();
         
         ps.setString(1, countryName);
-        ps.setString(2, time);
+        bindDateTime(ps, 2, now);
         ps.setString(3, userName);
-        ps.setString(4, time);
+        bindDateTime(ps, 4, now);
         ps.setString(5, userName);
         ps.execute();
         

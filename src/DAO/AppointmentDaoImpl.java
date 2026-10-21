@@ -11,9 +11,6 @@ import Model.Customer;
 import Model.User;
 import static Model.User.getCurrentUser;
 import Utilities.RBMain;
-import static Utilities.TimeFiles.dbStrNow;
-import static Utilities.TimeFiles.dbStrToLocalDateTime;
-import static Utilities.TimeFiles.localDateTimeToDBStr;
 import static Utilities.TimeFiles.localDateTimeToUITime;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -40,8 +37,8 @@ public class AppointmentDaoImpl extends GeneralDaoImpl{
         PreparedStatement ps = setPreparedStatement(sqlStatement);
         ps.setInt(1, Customer.getCurrentCustomer().getCustomerId());
         ps.setInt(2, User.getCurrentUser().getUserId());
-        ps.setString(3, localDateTimeToDBStr(start));
-        ps.setString(4, localDateTimeToDBStr(end));
+        bindDateTime(ps, 3, start);
+        bindDateTime(ps, 4, end);
         ps.execute();
         ResultSet rs = ps.getResultSet();
         
@@ -76,8 +73,8 @@ public class AppointmentDaoImpl extends GeneralDaoImpl{
         else{
             selectStatement="SELECT * FROM appointment WHERE userId = ? AND start BETWEEN ? AND ? ORDER BY start";
             ps = setPreparedStatement(selectStatement);
-            ps.setString(2, localDateTimeToDBStr(searchStart));
-            ps.setString(3, localDateTimeToDBStr(searchEnd));
+            bindDateTime(ps, 2, searchStart);
+            bindDateTime(ps, 3, searchEnd);
         }
         ps.setInt(1, userId);
         ps.execute();
@@ -93,11 +90,8 @@ public class AppointmentDaoImpl extends GeneralDaoImpl{
             String contact = rs.getString("contact");
             String type = rs.getString("type");
             String url = rs.getString("url");
-            String startStr = rs.getString("start");
-            String endStr = rs.getString("end");
-            
-            LocalDateTime start = dbStrToLocalDateTime(startStr);
-            LocalDateTime end = dbStrToLocalDateTime(endStr);
+            LocalDateTime start = readDateTime(rs, "start");
+            LocalDateTime end = readDateTime(rs, "end");
             getMetadata(rs);
             
             Appointment appointmentResult = new Appointment(appointmentId, customerId, userId, title, description, location, contact, type, url, start, end, createDateLdt, createdBy, lastUpdateLdt, lastUpdateBy);
@@ -108,11 +102,11 @@ public class AppointmentDaoImpl extends GeneralDaoImpl{
     }
     
     // Creates a report of the number of various types of appointments each month in a given time period
-    public static String getTypeReport(ObservableList<String> searchTimes, Integer userId) throws SQLException {
+    public static String getTypeReport(ObservableList<LocalDateTime> searchTimes, Integer userId) throws SQLException {
         
         String report = "";
-        String startSearch = searchTimes.get(0);
-        String endSearch = searchTimes.get(1);
+        LocalDateTime startSearch = searchTimes.get(0);
+        LocalDateTime endSearch = searchTimes.get(1);
         String currentMonth = "";
         String selectStatement;
         PreparedStatement ps;
@@ -125,8 +119,8 @@ public class AppointmentDaoImpl extends GeneralDaoImpl{
                                 "ORDER BY ANY_VALUE(start)";
             ps = setPreparedStatement(selectStatement);
             ps.setInt(1, userId);
-            ps.setString(2, startSearch);
-            ps.setString(3, endSearch);
+            bindDateTime(ps, 2, startSearch);
+            bindDateTime(ps, 3, endSearch);
         }
         // Report for ALL users
         else{
@@ -135,8 +129,8 @@ public class AppointmentDaoImpl extends GeneralDaoImpl{
                             "GROUP BY apptperiod, type " +
                             "ORDER BY ANY_VALUE(start)";
             ps = setPreparedStatement(selectStatement);
-            ps.setString(1, startSearch);
-            ps.setString(2, endSearch);
+            bindDateTime(ps, 1, startSearch);
+            bindDateTime(ps, 2, endSearch);
         }
         
         ps.execute();
@@ -159,11 +153,11 @@ public class AppointmentDaoImpl extends GeneralDaoImpl{
     }
     
     // Creates a report of the average # of appointments among all consultants by month in a given time period
-    public static String getAvgApptReport(ObservableList<String> searchTimes) throws SQLException {
+    public static String getAvgApptReport(ObservableList<LocalDateTime> searchTimes) throws SQLException {
         
         String report = "";
-        String startSearch = searchTimes.get(0);
-        String endSearch = searchTimes.get(1);
+        LocalDateTime startSearch = searchTimes.get(0);
+        LocalDateTime endSearch = searchTimes.get(1);
         String selectStatement;
         PreparedStatement ps;
 
@@ -173,8 +167,8 @@ public class AppointmentDaoImpl extends GeneralDaoImpl{
                            "GROUP BY userId, apptperiod) totappts " + 
                         "GROUP BY totappts.apptperiod ORDER BY totappts.start";
         ps = setPreparedStatement(selectStatement);
-        ps.setString(1, startSearch);
-        ps.setString(2, endSearch);
+        bindDateTime(ps, 1, startSearch);
+        bindDateTime(ps, 2, endSearch);
         
         ps.execute();
         ResultSet rs = ps.getResultSet();
@@ -200,7 +194,7 @@ public class AppointmentDaoImpl extends GeneralDaoImpl{
         PreparedStatement ps = setPreparedStatement(createStatement);
         
         String userName = getCurrentUser().getUserName();
-        String time = dbStrNow();
+        LocalDateTime now = LocalDateTime.now();
         
         ps.setInt(1, Customer.getCurrentCustomer().getCustomerId());
         ps.setInt(2, User.getCurrentUser().getUserId());
@@ -210,11 +204,11 @@ public class AppointmentDaoImpl extends GeneralDaoImpl{
         ps.setString(6, contact);
         ps.setString(7, type);
         ps.setString(8, url);
-        ps.setString(9, localDateTimeToDBStr(start));
-        ps.setString(10, localDateTimeToDBStr(end));
-        ps.setString(11, time);
+        bindDateTime(ps, 9, start);
+        bindDateTime(ps, 10, end);
+        bindDateTime(ps, 11, now);
         ps.setString(12, userName);
-        ps.setString(13, time);
+        bindDateTime(ps, 13, now);
         ps.setString(14, userName);
         ps.execute();
         
@@ -236,7 +230,7 @@ public class AppointmentDaoImpl extends GeneralDaoImpl{
         PreparedStatement ps = setPreparedStatement(updateStatement);
         
         String userName = getCurrentUser().getUserName();
-        String time = dbStrNow();
+        LocalDateTime now = LocalDateTime.now();
         
         ps.setString(1, title);
         ps.setString(2, description);
@@ -244,9 +238,9 @@ public class AppointmentDaoImpl extends GeneralDaoImpl{
         ps.setString(4, contact);
         ps.setString(5, type);
         ps.setString(6, url);
-        ps.setString(7, localDateTimeToDBStr(start));
-        ps.setString(8, localDateTimeToDBStr(end));
-        ps.setString(9, time);
+        bindDateTime(ps, 7, start);
+        bindDateTime(ps, 8, end);
+        bindDateTime(ps, 9, now);
         ps.setString(10, userName);
         ps.setInt(11, customerId);
         ps.setInt(12, appointmentId);
@@ -265,14 +259,10 @@ public class AppointmentDaoImpl extends GeneralDaoImpl{
         PreparedStatement ps;
         
         // For 'start BETWEEN ? AND ?'
-        String startStr1 = localDateTimeToDBStr(searchStart);
         LocalDateTime searchEndAdj = searchEnd.minusSeconds(1);
-        String endStr1 = localDateTimeToDBStr(searchEndAdj);
         
         // For 'end BETWEEN ? AND ?'
         LocalDateTime searchStartAdj = searchStart.plusSeconds(1);
-        String startStr2 = localDateTimeToDBStr(searchStartAdj);
-        String endStr2 = localDateTimeToDBStr(searchEnd);
 
         // Because BETWEEN is inclusive, we need to ensure that:
         // if DB appt starts when Local appt ends, that is okay
@@ -287,10 +277,10 @@ public class AppointmentDaoImpl extends GeneralDaoImpl{
         ps = setPreparedStatement(selectStatement);
         ps.setInt(1, userId);
         ps.setInt(2, customerId);
-        ps.setString(3, startStr1);
-        ps.setString(4, endStr1);
-        ps.setString(5, startStr2);
-        ps.setString(6, endStr2);
+        bindDateTime(ps, 3, searchStart);
+        bindDateTime(ps, 4, searchEndAdj);
+        bindDateTime(ps, 5, searchStartAdj);
+        bindDateTime(ps, 6, searchEnd);
         ps.execute();
         ResultSet rs = ps.getResultSet();
         
@@ -325,16 +315,14 @@ public class AppointmentDaoImpl extends GeneralDaoImpl{
         int userId = User.getCurrentUser().getUserId();
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startLdt = now.plusMinutes(15);
-        String startSearch = localDateTimeToDBStr(startLdt);
-        String endSearch = localDateTimeToDBStr(now);
 
         selectStatement="select customerName, start from appointment " + 
                         "inner join customer on customer.customerId = appointment.customerId " +
                         "where userId = ? AND start <= ? AND end > ?";
         ps = setPreparedStatement(selectStatement);
         ps.setInt(1, userId);
-        ps.setString(2, startSearch);
-        ps.setString(3, endSearch);
+        bindDateTime(ps, 2, startLdt);
+        bindDateTime(ps, 3, now);
         
         ps.execute();
         ResultSet rs = ps.getResultSet();
@@ -342,8 +330,7 @@ public class AppointmentDaoImpl extends GeneralDaoImpl{
         if(rs.next()){
             
             String customerName = rs.getString("customerName");
-            String start = rs.getString("start");
-            LocalDateTime apptTime = dbStrToLocalDateTime(start);
+            LocalDateTime apptTime = readDateTime(rs, "start");
             long minuteDiff = ChronoUnit.MINUTES.between(now,apptTime);
             long secondDiff = ChronoUnit.SECONDS.between(now,apptTime);
             ResourceBundle rb = RBMain.getRb();

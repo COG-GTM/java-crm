@@ -1,0 +1,12 @@
+# Maven
+target/
+
+# IDE
+.idea/
+*.iml
+nbproject/private/
+build/
+
+# Logs produced at runtime
+errorlog.txt
+userlog.txt

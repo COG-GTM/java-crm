@@ -56,8 +56,8 @@ public class ReportScreenController extends GeneralController implements Initial
         try{
             Report selectedReport = reportComboBox.getValue();
             LocalDateTime start = LocalDateTime.now();
-            ObservableList<String> rollingYear = getSearchTimes(start,true);
-            ObservableList<String> calendarYear = getSearchTimes(start, false);
+            ObservableList<LocalDateTime> rollingYear = getSearchTimes(start,true);
+            ObservableList<LocalDateTime> calendarYear = getSearchTimes(start, false);
 
             switch (selectedReport.getReportId()) {
                 case 1:

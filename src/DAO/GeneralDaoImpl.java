@@ -5,7 +5,10 @@
  */
 package DAO;
 
-import static Utilities.TimeFiles.dbStrToLocalDateTime;
+import static Utilities.TimeFiles.dbTimestampToLocalDateTime;
+import static Utilities.TimeFiles.localDateTimeToDbTimestamp;
+import static Utilities.TimeFiles.utcCalendar;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -16,19 +19,25 @@ import java.time.LocalDateTime;
  */
 public class GeneralDaoImpl {
     
-    protected static String createDate;
     protected static String createdBy;
-    protected static String lastUpdate;
     protected static String lastUpdateBy;
     protected static LocalDateTime createDateLdt;
     protected static LocalDateTime lastUpdateLdt;
     
     protected static void getMetadata(ResultSet rs) throws SQLException {
-        createDate = rs.getString("createDate");
         createdBy = rs.getString("createdBy");
-        lastUpdate = rs.getString("lastUpdate");
         lastUpdateBy = rs.getString("lastUpdateBy");
-        createDateLdt = dbStrToLocalDateTime(createDate);
-        lastUpdateLdt = dbStrToLocalDateTime(lastUpdate);
-    }    
+        createDateLdt = readDateTime(rs, "createDate");
+        lastUpdateLdt = readDateTime(rs, "lastUpdate");
+    }
+    
+    // Reads a UTC DATETIME column and returns it in the user's timezone
+    protected static LocalDateTime readDateTime(ResultSet rs, String column) throws SQLException {
+        return dbTimestampToLocalDateTime(rs.getTimestamp(column, utcCalendar()));
+    }
+    
+    // Binds a user-timezone LocalDateTime to a DATETIME parameter, stored as UTC
+    protected static void bindDateTime(PreparedStatement ps, int parameterIndex, LocalDateTime ldt) throws SQLException {
+        ps.setTimestamp(parameterIndex, localDateTimeToDbTimestamp(ldt), utcCalendar());
+    }
 }

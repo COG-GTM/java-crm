@@ -5,12 +5,13 @@
  */
 package Utilities;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.TimeZone;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,7 +22,6 @@ import javafx.collections.ObservableList;
  */
 public class TimeFiles {
     
-    private static final DateTimeFormatter DBDATETIMEFORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
     private static final DateTimeFormatter UITIMEFORMAT = DateTimeFormatter.ofPattern("h:mm a");
     private static final DateTimeFormatter UIDATEFORMAT = DateTimeFormatter.ofPattern("M/d/yyyy");
     
@@ -32,23 +32,24 @@ public class TimeFiles {
         return ldt;
     }
     
-    // Takes a LocalDateTime
-    // Returns a DB-ready String representing timestamp in UTC
-    public static String localDateTimeToDBStr(LocalDateTime ldtUser){
-        ZonedDateTime zdtUser = ZonedDateTime.of(ldtUser, TimeZone.getDefault().toZoneId());
-        ZonedDateTime zdtUtc = zdtUser.withZoneSameInstant(ZoneId.of("UTC"));
-        String dbStr = zdtUtc.format(DBDATETIMEFORMAT);
-        return dbStr;
+    // Takes a LocalDateTime in the user's timezone
+    // Returns the instant it represents as a java.sql.Timestamp, ready for PreparedStatement.setTimestamp
+    public static Timestamp localDateTimeToDbTimestamp(LocalDateTime ldtUser){
+        return Timestamp.from(ldtUser.atZone(ZoneId.systemDefault()).toInstant());
     }
     
-    // Takes a String representing DB timestamp in UTC
-    // Returns a LocalDateTime in User's timezone, automatically taking into account Daylight vs Standard time
-    public static LocalDateTime dbStrToLocalDateTime(String dbStr){
-        LocalDateTime ldtUtc = LocalDateTime.parse(dbStr, DBDATETIMEFORMAT);
-        ZonedDateTime zdtUtc = ZonedDateTime.of(ldtUtc, ZoneId.of("UTC"));
-        ZonedDateTime zdtUser = zdtUtc.withZoneSameInstant(TimeZone.getDefault().toZoneId());
-        LocalDateTime ldtUser = zdtUser.toLocalDateTime();
-        return ldtUser;
+    // Takes a java.sql.Timestamp read from the DB (null-safe)
+    // Returns a LocalDateTime in the user's timezone, automatically taking into account Daylight vs Standard time
+    public static LocalDateTime dbTimestampToLocalDateTime(Timestamp ts){
+        if(ts == null)
+            return null;
+        return LocalDateTime.ofInstant(ts.toInstant(), ZoneId.systemDefault());
+    }
+    
+    // Returns a fresh UTC Calendar for JDBC getTimestamp/setTimestamp
+    // so the DATETIME columns are stored and read as UTC regardless of JVM or driver timezone settings
+    public static Calendar utcCalendar(){
+        return Calendar.getInstance(TimeZone.getTimeZone("UTC"));
     }
     
     // Takes a LocalDateTime
@@ -77,36 +78,29 @@ public class TimeFiles {
         return ltList;
     }
     
-    // Returns a string representing current date and time in UTC in DB format
-    public static String dbStrNow(){
-        return localDateTimeToDBStr(LocalDateTime.now());
-    }
-    
     // Takes a LocalDateTime representing start date of search period
-    // Returns a list of Strings representing start and end LocalDateTimes with either a rolling year or a calendar year
+    // Returns a list of start and end LocalDateTimes with either a rolling year or a calendar year
     // 
     // Rolling year: FROM 1 year before start TO start
     // Calendar year: FROM 1st day of start year TO last day of start year
     //
     // Note: rolling year calculates up to today, not through the end of the month
-    public static ObservableList<String> getSearchTimes(LocalDateTime start, Boolean rolling){
+    public static ObservableList<LocalDateTime> getSearchTimes(LocalDateTime start, Boolean rolling){
         
-        ObservableList<String> searchTimes = FXCollections.observableArrayList();
-        String startSearch;
-        String endSearch;
+        ObservableList<LocalDateTime> searchTimes = FXCollections.observableArrayList();
+        LocalDateTime startSearch;
+        LocalDateTime endSearch;
 
         // Rolling Year
         if(rolling == true){
-            startSearch = localDateTimeToDBStr(start.minusYears(1));
-            endSearch = localDateTimeToDBStr(start);
+            startSearch = start.minusYears(1);
+            endSearch = start;
         }
         // Calendar Year
         else{
             LocalDate ld = start.toLocalDate();
-            LocalDateTime ldtFirstOfYear = LocalDateTime.of(ld.withDayOfYear(1), LocalTime.MIN);
-            LocalDateTime ldtLastOfYear = LocalDateTime.of(ld.withDayOfYear(ld.lengthOfYear()), LocalTime.MAX);
-            startSearch = localDateTimeToDBStr(ldtFirstOfYear);
-            endSearch = localDateTimeToDBStr(ldtLastOfYear);
+            startSearch = LocalDateTime.of(ld.withDayOfYear(1), LocalTime.MIN);
+            endSearch = LocalDateTime.of(ld.withDayOfYear(ld.lengthOfYear()), LocalTime.MAX);
         }  
         
         searchTimes.addAll(startSearch, endSearch);
